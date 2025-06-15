@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كريم طارق | مطور واجهات متكاملة ومبتكر</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Tajawal & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* استخدام خطوط مخصصة */
+        body {
+            font-family: 'Tajawal', 'Inter', sans-serif;
+            background-color: #0A192F;
+            color: #CCD6F6;
+        }
+
+        /* تأثير التوهج الناعم للأزرار */
+        .glowing-btn {
+            box-shadow: 0 0 5px #6366f1, 0 0 10px #6366f1;
+            transition: all 0.3s ease-in-out;
+        }
+        .glowing-btn:hover {
+            box-shadow: 0 0 15px #818cf8, 0 0 25px #818cf8;
+            transform: scale(1.05);
+        }
+
+        /* تأثيرات الحركة للعناصر عند ظهورها */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* وميض مؤشر الكتابة */
+        .typing-cursor {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            50% { border-color: #6366f1; }
+        }
+        
+        /* حركة الأيقونات العائمة */
+        .floating-icon {
+            position: absolute;
+            animation: float 6s ease-in-out infinite;
+        }
+        .floating-icon-2 { animation-delay: 2s; }
+        .floating-icon-3 { animation-delay: 4s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* تصميم مخصص للـ scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0A192F; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+        
+        /* ---- نافذة المشاريع (Modal) ---- */
+        #projects-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 25, 47, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #projects-modal.show { opacity: 1; visibility: visible; }
+        
+        .modal-content {
+            background-color: #112240;
+            border: 1px solid #6366f180;
+            border-radius: 1rem;
+            width: 95%;
+            max-width: 1300px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transform: scale(0.95);
+            transition: transform 0.4s ease;
+        }
+        #projects-modal.show .modal-content { transform: scale(1); }
+
+        .modal-header { padding: 1.5rem; border-bottom: 1px solid #6366f150; }
+        .modal-body { overflow-y: auto; padding: 1.5rem; }
+
+        .project-card {
+            background-color: #0A192F;
+            border: 1px solid #6366f130;
+            border-radius: 0.75rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-8px);
+            border-color: #6366f1;
+        }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <!-- حاوية الموقع الرئيسية -->
+    <div class="container mx-auto px-4 md:px-8 max-w-7xl">
+
+        <!-- شريط التنقل (Header) -->
+        <header class="py-6">
+            <nav class="flex justify-between items-center">
+                <a href="#" class="text-2xl font-bold text-white tracking-wider">Karim.</a>
+                <div class="hidden md:flex items-center space-x-reverse space-x-8">
+                    <a href="#home" class="hover:text-indigo-400 transition duration-300">الرئيسية</a>
+                    <button id="nav-projects-btn" class="hover:text-indigo-400 transition duration-300 bg-transparent border-none">المشاريع</button>
+                    <a href="#contact" class="hover:text-indigo-400 transition duration-300">تواصل</a>
+                </div>
+                <div class="flex items-center space-x-reverse space-x-4">
+                    <a href="https://github.com/KarimTarek" target="_blank" class="text-2xl hover:text-indigo-400 transition duration-300"><i class="fab fa-github"></i></a>
+                    <button class="md:hidden text-2xl" id="menu-btn"><i class="fas fa-bars"></i></button>
+                </div>
+            </nav>
+            <!-- قائمة الموبايل -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 bg-gray-800 rounded-lg p-4">
+               <a href="#home" class="block py-2 hover:text-indigo-400 transition duration-300">الرئيسية</a>
+               <button id="mobile-projects-btn" class="w-full text-right block py-2 hover:text-indigo-400 transition duration-300 bg-transparent border-none">المشاريع</button>
+               <a href="#contact" class="block py-2 hover:text-indigo-400 transition duration-300">تواصل</a>
+            </div>
+        </header>
+
+        <!-- القسم الرئيسي (Hero Section) -->
+        <main id="home" class="grid md:grid-cols-2 items-center min-h-[calc(100vh-150px)] py-12 md:py-0">
+            <!-- المحتوى النصي -->
+            <div class="text-center md:text-right">
+                <span class="fade-in-up inline-block bg-indigo-500 bg-opacity-20 text-indigo-300 text-sm font-medium px-4 py-1 rounded-full mb-4">
+                    متاح للعمل الحر
+                </span>
+                <h1 class="fade-in-up text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+                    مرحباً، أنا كريم طارق
+                </h1>
+                <h2 class="fade-in-up text-3xl md:text-4xl text-gray-400 mt-2">
+                    <span id="typing-text"></span><span class="border-r-4 border-transparent typing-cursor"></span>
+                </h2>
+                <p class="fade-in-up mt-6 text-lg max-w-xl mx-auto md:mx-0">
+                    أصنع تطبيقات ويب متجاوبة حيث تلتقي التقنيات بالإبداع.
+                    <br>
+                    بناء تجارب رقمية استثنائية باستخدام أطر عمل حديثة.
+                </p>
+                <div class="fade-in-up mt-8 flex justify-center md:justify-start space-x-reverse space-x-4">
+                    <button id="main-projects-btn" class="glowing-btn bg-indigo-600 text-white font-semibold py-3 px-8 rounded-lg hover:bg-indigo-700 transition duration-300">
+                        <i class="fas fa-layer-group mr-2"></i> شاهد أعمالي
+                    </button>
+                    <a href="https://wa.me/201069467487" class="bg-gray-700 text-white font-semibold py-3 px-8 rounded-lg hover:bg-gray-600 transition duration-300">
+                        تواصل معي
+                    </a>
+                </div>
+            </div>
+
+            <!-- الصورة الشخصية والتأثيرات -->
+            <div class="fade-in-up relative mt-12 md:mt-0 flex justify-center items-center">
+                <div class="relative w-72 h-72 md:w-96 md:h-96">
+                    <div class="absolute inset-0 bg-indigo-600 rounded-full blur-3xl opacity-40 animate-pulse"></div>
+                    <img src="https://c.top4top.io/p_34492se483.jpg" alt="صورة كريم طارق الشخصية" class="relative w-full h-full object-cover rounded-full border-4 border-gray-800 shadow-2xl"
+                         onerror="this.onerror=null;this.src='https://placehold.co/400x400/0A192F/FFFFFF?text=Karim';" />
+                    
+                    <div class="floating-icon" style="top: 10%; left: 0;">
+                        <div class="w-12 h-12 bg-gray-800/50 backdrop-blur-sm rounded-full flex items-center justify-center text-indigo-400 text-2xl"><i class="fas fa-code"></i></div>
+                    </div>
+                    <div class="floating-icon floating-icon-2" style="bottom: 10%; right: 0;">
+                        <div class="w-12 h-12 bg-gray-800/50 backdrop-blur-sm rounded-full flex items-center justify-center text-indigo-400 text-2xl"><i class="fas fa-brain"></i></div>
+                    </div>
+                     <div class="floating-icon floating-icon-3" style="top: 40%; right: -10%;">
+                        <div class="w-12 h-12 bg-gray-800/50 backdrop-blur-sm rounded-full flex items-center justify-center text-indigo-400 text-2xl"><i class="fas fa-cubes"></i></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer id="contact" class="text-center py-8 text-gray-400">
+            <p>جميع الحقوق محفوظة &copy; 2025 للمطور كريم طارق</p>
+        </footer>
+    </div>
+
+    <!-- نافذة المشاريع (Modal) -->
+    <div id="projects-modal">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <header class="modal-header flex justify-between items-center">
+                <h2 class="text-2xl font-bold text-white">معرض المشاريع المبتكرة</h2>
+                <button id="close-modal-btn" class="text-3xl text-gray-400 hover:text-white transition">&times;</button>
+            </header>
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- سيتم حقن المشاريع هنا عبر جافاسكريبت -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- تأثير الكتابة ---
+            const typingTextElement = document.getElementById('typing-text');
+            const textToType = "مطور واجهات متكاملة";
+            let charIndex = 0;
+            function type() {
+                if (charIndex < textToType.length) {
+                    typingTextElement.textContent += textToType.charAt(charIndex);
+                    charIndex++;
+                    setTimeout(type, 100);
+                }
+            }
+            type();
+
+            // --- تأثير ظهور العناصر عند التمرير ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('is-visible');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+            
+            // --- قائمة الموبايل ---
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+            // --- منطق نافذة المشاريع (Modal) ---
+            const projectsModal = document.getElementById('projects-modal');
+            const openModalBtns = [
+                document.getElementById('main-projects-btn'),
+                document.getElementById('nav-projects-btn'),
+                document.getElementById('mobile-projects-btn')
+            ];
+            const closeModalBtn = document.getElementById('close-modal-btn');
+
+            const openModal = () => projectsModal.classList.add('show');
+            const closeModal = () => projectsModal.classList.remove('show');
+
+            openModalBtns.forEach(btn => btn.addEventListener('click', openModal));
+            closeModalBtn.addEventListener('click', closeModal);
+            projectsModal.addEventListener('click', (e) => {
+                if (e.target === projectsModal) closeModal();
+            });
+
+            // --- بيانات وإنشاء المشاريع ---
+            const projectsData = [
+                { icon: 'fa-brain', title: 'محرك Synapse AI', desc: 'واجهة عصبية لتصور البيانات ثلاثية الأبعاد في الوقت الفعلي.', tech: ['Python', 'TensorFlow', 'WebGL'] },
+                { icon: 'fa-shield-halved', title: 'مشروع Chimera', desc: 'مكتبة تشفير متقدمة مقاومة للحوسبة الكمومية.', tech: ['Rust', 'Post-Quantum Crypto'] },
+                { icon: 'fa-cubes', title: 'منصة EchoVerse', desc: 'لبناء عوالم افتراضية مستمرة ومدفوعة بالذكاء الاصطناعي.', tech: ['C++', 'Unreal Engine', 'gRPC'] },
+                { icon: 'fa-solar-panel', title: 'شبكة Helios للطاقة', desc: 'منصة IoT لإدارة شبكات الطاقة الشمسية المجتمعية بذكاء.', tech: ['Go', 'MQTT', 'TimescaleDB'] },
+                { icon: 'fa-vr-cardboard', title: 'Oasis AR', desc: 'تطبيق واقع معزز لإعادة بناء المواقع التاريخية المندثرة.', tech: ['Swift', 'ARKit', 'Photogrammetry'] },
+                { icon: 'fa-satellite-dish', title: 'شبكة Mycelium', desc: 'شبكة لامركزية للتواصل الآمن خارج نطاق الشبكات التقليدية.', tech: ['Libp2p', 'Golang'] },
+                { icon: 'fa-dna', title: 'محاكاة BioSynth', desc: 'محاكاة تطوي البروتين باستخدام نماذج التعلم الآلي المتقدمة.', tech: ['Python', 'PyTorch', 'AlphaFold'] },
+                { icon: 'fa-chart-line', title: 'محرك ChronoLeap', desc: 'نظام تحليلات تنبؤية للأسواق المالية باستخدام الذكاء الاصطناعي.', tech: ['KDB+', 'Q', 'Machine Learning'] },
+                { icon: 'fa-robot', title: 'Sentinel Drone AI', desc: 'نظام ذكي لإدارة أسراب الطائرات بدون طيار ذاتية التحكم.', tech: ['C++', 'ROS', 'Computer Vision'] },
+                { icon: 'fa-code', title: 'AI CodeWeaver', desc: 'أداة ذكاء اصطناعي لإكمال الكود تتكيف بذكاء مع أسلوب المطور.', tech: ['Python', 'GPT-4 Fine-tuning'] },
+                { icon: 'fa-water', title: 'AquaPure Monitor', desc: 'شبكة مستشعرات IoT لمراقبة جودة المياه بدقة في الوقت الفعلي.', tech: ['Arduino', 'LoRaWAN', 'InfluxDB'] },
+                { icon: 'fa-head-side-cough', title: 'NeuroScribe AI', desc: 'أداة مبتكرة تحول موجات الدماغ المسجلة (EEG) إلى نص مفهوم.', tech: ['Python', 'MNE', 'RNN'] },
+                { icon: 'fa-globe', title: 'مشروع Genesis', desc: 'محاكاة متكاملة لاستصلاح كوكب المريخ للتخطيط الاستيطاني.', tech: ['Unity', 'C#', 'Physics Simulation'] },
+                { icon: 'fa-user-secret', title: 'خوارزمية De-Fake', desc: 'نموذج تعلم عميق فائق الدقة لكشف التزييف العميق في الفيديو.', tech: ['PyTorch', 'GANs', 'Signal Processing'] },
+                { icon: 'fa-language', title: 'مترجم Polyglot', desc: 'مترجم صوتي فوري يدعم أكثر من 150 لغة بلكنات متعددة.', tech: ['Custom NMT Model', 'WebRTC'] },
+                { icon: 'fa-handshake-angle', title: 'Karma Ledger', desc: 'بلوك تشين لتسجيل السمعة الرقمية بشكل لامركزي وموثوق.', tech: ['Solidity', 'Ethereum', 'IPFS'] },
+                { icon: 'fa-music', title: 'مولد SoundScape', desc: 'ذكاء اصطناعي يولد مقطوعات موسيقية ديناميكية حسب الحالة المزاجية.', tech: ['Magenta', 'Python', 'WaveNet'] },
+                { icon: 'fa-store', title: 'منصة V-Commerce', desc: 'تجربة تسوق غامرة في الواقع الافتراضي مع مساعدين أذكياء.', tech: ['A-Frame', 'WebXR', 'Dialogflow'] },
+                { icon: 'fa-user-md', title: 'Cognitive Monitor', desc: 'تطبيق يراقب الحمل المعرفي للطيارين والجراحين عبر أجهزة قابلة للارتداء.', tech: ['Kotlin', 'Wear OS', 'Biosensors'] },
+                { icon: 'fa-database', title: 'نظام Aetheria OS', desc: 'نظام تشغيل لامركزي بالكامل قائم على تكنولوجيا البلوك تشين.', tech: ['Substrate', 'Rust', 'WASM'] }
+            ];
+
+            const projectsGrid = document.getElementById('projects-grid');
+            projectsData.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'project-card p-6 flex flex-col h-full';
+                const techBadges = p.tech.map(t => `<span class="inline-block bg-indigo-500 bg-opacity-20 text-indigo-300 text-xs font-medium mr-2 mb-2 px-2.5 py-0.5 rounded-full">${t}</span>`).join('');
+
+                card.innerHTML = `
+                    <div class="flex items-start mb-4">
+                        <i class="fas ${p.icon} text-2xl text-indigo-400 mt-1"></i>
+                        <div class="mr-4">
+                            <h3 class="font-bold text-lg text-white">${p.title}</h3>
+                            <p class="text-gray-400 text-sm mt-1">${p.desc}</p>
+                        </div>
+                    </div>
+                    <div class="border-t border-indigo-500/20 pt-4 mt-auto">
+                        <div class="flex flex-wrap">${techBadges}</div>
+                    </div>
+                `;
+                projectsGrid.appendChild(card);
+            });
+        });
+    </script>
+</body>
+</html>
+
